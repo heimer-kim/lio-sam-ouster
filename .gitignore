@@ -1,0 +1,13 @@
+build/
+devel/
+install/
+logs/
+*.swp
+*.pyc
+*.bag
+*.pcd
+*.log
+.ccls-cache/
+.idea/
+.vscode/
+

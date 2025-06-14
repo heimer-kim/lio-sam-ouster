@@ -1,0 +1,17 @@
+digraph G {
+"world" -> "imu_link"[label="Broadcaster: /xsens_mti_node\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1749450333.154 sec old)\nBuffer length: 0.000 sec\n"];
+"imu_link" -> "os_sensor"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1749450333.154 sec old)\nBuffer length: 0.000 sec\n"];
+"os_sensor" -> "os_lidar"[label="Broadcaster: /ouster/os_nodelet_mgr\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1749450333.154 sec old)\nBuffer length: 0.000 sec\n"];
+"os_sensor" -> "os_imu"[label="Broadcaster: /ouster/os_nodelet_mgr\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1749450333.154 sec old)\nBuffer length: 0.000 sec\n"];
+"base_link" -> "chassis_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1749450333.154 sec old)\nBuffer length: 0.000 sec\n"];
+"chassis_link" -> "navsat_link"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1749450333.154 sec old)\nBuffer length: 0.000 sec\n"];
+"chassis_link" -> "velodyne"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1749450333.154 sec old)\nBuffer length: 0.000 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1749450333.154"[ shape=plaintext ] ;
+ }->"base_link";
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1749450333.154"[ shape=plaintext ] ;
+ }->"world";
+}
