@@ -1,0 +1,27 @@
+obstacle_range: 8.0
+raytrace_range: 10.0
+
+# Hunter 차량 발자국 (track=0.605m, wheelbase=0.65m + 안전여유)
+footprint: [[-0.35, -0.35], [-0.35, 0.35], [0.35, 0.35], [0.35, -0.35]]
+
+inflation_radius: 0.8
+cost_scaling_factor: 5.0
+
+observation_sources: laser_scan_sensor
+
+laser_scan_sensor:
+  sensor_frame: imu_link  # base_link 대신 imu_link 사용
+  data_type: LaserScan
+  topic: /scan
+  marking: true
+  clearing: true
+  min_obstacle_height: -0.3
+  max_obstacle_height: 2.0
+  obstacle_range: 8.0
+  raytrace_range: 10.0
+
+map_type: costmap
+track_unknown_space: false
+unknown_cost_value: -1
+lethal_cost_threshold: 100
+transform_tolerance: 0.2

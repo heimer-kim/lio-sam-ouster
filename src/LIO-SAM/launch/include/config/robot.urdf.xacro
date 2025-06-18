@@ -1,0 +1,181 @@
+<?xml version="1.0"?>
+<robot name="hunter_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Hunter 차량 상수 -->
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="wheelbase" value="0.65"/>  <!-- Hunter wheelbase -->
+  <xacro:property name="track" value="0.605"/>     <!-- Hunter track -->
+  <xacro:property name="wheel_radius" value="0.165"/> <!-- Hunter wheel radius -->
+  <xacro:property name="vehicle_height" value="0.55"/>
+  <xacro:property name="lidar_height" value="0.1"/>  <!-- IMU 위로 10cm -->
+
+  <!-- IMU Link (LIO-SAM에서 실제 base_link 역할, TF tree의 최상위) -->
+  <link name="imu_link">
+    <visual>
+      <geometry>
+        <box size="${wheelbase} ${track} ${vehicle_height}"/>
+      </geometry>
+      <material name="hunter_blue">
+        <color rgba="0.1 0.3 0.8 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${wheelbase} ${track} ${vehicle_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="80"/>
+      <inertia ixx="5.0" ixy="0.0" ixz="0.0" iyy="8.0" iyz="0.0" izz="10.0"/>
+    </inertial>
+  </link>
+
+  <!-- Base Link (시각화용, imu_link와 동일한 위치) -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 0.02"/>
+      </geometry>
+      <material name="red">
+        <color rgba="0.8 0.2 0.2 1"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="imu_to_base" type="fixed">
+    <parent link="imu_link"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/> <!-- 동일한 위치 -->
+  </joint>
+
+  <!-- LiDAR 센서 프레임 -->
+  <link name="os_sensor">
+    <visual>
+      <geometry>
+        <cylinder radius="0.06" length="0.08"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="os_sensor_joint" type="fixed">
+    <parent link="imu_link"/>
+    <child link="os_sensor"/>
+    <origin xyz="0 0 ${lidar_height}" rpy="0 0 0"/> <!-- IMU에서 LiDAR까지 Z+ 10cm -->
+  </joint>
+
+  <link name="os_lidar"/>
+  <joint name="os_lidar_joint" type="fixed">
+    <parent link="os_sensor"/>
+    <child link="os_lidar"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="os_imu"/>
+  <joint name="os_imu_joint" type="fixed">
+    <parent link="os_sensor"/>
+    <child link="os_imu"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Hunter 차량 바퀴들 -->
+  <!-- 전륜 좌측 -->
+  <link name="front_left_wheel">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="0.08"/>
+      </geometry>
+      <material name="wheel_black">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="0.08"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- 전륜 우측 -->
+  <link name="front_right_wheel">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="0.08"/>
+      </geometry>
+      <material name="wheel_black">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="0.08"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- 후륜 좌측 -->
+  <link name="rear_left_wheel">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="0.08"/>
+      </geometry>
+      <material name="wheel_black">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="0.08"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- 후륜 우측 -->
+  <link name="rear_right_wheel">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="0.08"/>
+      </geometry>
+      <material name="wheel_black">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="0.08"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- 바퀴 조인트들 (모두 imu_link에 연결) -->
+  <joint name="front_left_wheel_joint" type="continuous">
+    <parent link="imu_link"/>
+    <child link="front_left_wheel"/>
+    <origin xyz="${wheelbase/2} ${track/2} ${-vehicle_height/2}" rpy="${PI/2} 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="front_right_wheel_joint" type="continuous">
+    <parent link="imu_link"/>
+    <child link="front_right_wheel"/>
+    <origin xyz="${wheelbase/2} ${-track/2} ${-vehicle_height/2}" rpy="${PI/2} 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="rear_left_wheel_joint" type="continuous">
+    <parent link="imu_link"/>
+    <child link="rear_left_wheel"/>
+    <origin xyz="${-wheelbase/2} ${track/2} ${-vehicle_height/2}" rpy="${PI/2} 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="rear_right_wheel_joint" type="continuous">
+    <parent link="imu_link"/>
+    <child link="rear_right_wheel"/>
+    <origin xyz="${-wheelbase/2} ${-track/2} ${-vehicle_height/2}" rpy="${PI/2} 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+</robot>

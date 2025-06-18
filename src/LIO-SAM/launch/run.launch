@@ -1,0 +1,26 @@
+<launch>
+  <arg name="project" default="lio_sam"/>
+
+  <!-- 1) Parameters -->
+  <rosparam file="$(find lio_sam)/config/params.yaml" command="load" />
+<!--
+
+  <node pkg="tf2_ros" type="static_transform_publisher" 
+        name="map_correction" 
+        args="0 0 0 3.14159 0 3.14159 map map_aligned"/>
+ -->
+
+
+  <!-- 5) LOAM -->
+  <include file="$(find lio_sam)/launch/include/module_loam.launch" />
+
+  <!-- 6) Robot State TF -->
+  <include file="$(find lio_sam)/launch/include/module_robot_state_publisher.launch" />
+
+  <!-- 7) Navsat -->
+  <!-- <include file="$(find lio_sam)/launch/include/module_navsat.launch" /> -->
+
+  <!-- 8) Rviz -->
+  <include file="$(find lio_sam)/launch/include/module_rviz.launch" />
+   
+</launch>

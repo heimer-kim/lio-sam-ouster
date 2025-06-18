@@ -1,0 +1,42 @@
+<launch>
+   
+    <!-- 포인트클라우드를 레이저스캔으로 변환 (Hunter 차량 높이 반영) -->
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
+        <remap from="cloud_in" to="/lio_sam/mapping/cloud_registered"/>
+        <remap from="scan" to="/scan"/>
+        <param name="target_frame" value="imu_link"/>
+        <param name="transform_tolerance" value="0.01"/>
+        <param name="min_height" value="-0.3"/>  <!-- 지면 기준 라이다가 55cm 높이에 있으므로 -->
+        <param name="max_height" value="0.8"/>   <!-- 라이다 기준 80cm까지 장애물 감지 -->
+        <param name="angle_min" value="-3.1416"/>
+        <param name="angle_max" value="3.1416"/>
+        <param name="angle_increment" value="0.0087"/>
+        <param name="scan_time" value="0.1"/>
+        <param name="range_min" value="0.5"/>    <!-- Hunter 차량 크기 고려 -->
+        <param name="range_max" value="30.0"/>
+        <param name="use_inf" value="true"/>
+        <param name="inf_epsilon" value="1.0"/>
+    </node>
+
+    <!-- Move Base 노드 (Hunter 차량용 설정) -->
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <!-- LIO-SAM odometry를 move_base로 리맵 -->
+        <remap from="odom" to="/lio_sam/mapping/odometry"/>
+        <remap from="cmd_vel" to="/cmd_vel"/>  <!-- Hunter 제어로 직접 연결 -->
+        
+        <!-- 설정 파일들 로드 -->
+        <rosparam file="$(find lio_sam)/config/navigation/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find lio_sam)/config/navigation/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find lio_sam)/config/navigation/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find lio_sam)/config/navigation/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find lio_sam)/config/navigation/dwa_local_planner_params.yaml" command="load" />
+        <rosparam file="$(find lio_sam)/config/navigation/move_base_params.yaml" command="load" />
+    </node>
+    
+    <!-- RViz 실행 -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find lio_sam)/rviz/navigation.rviz" required="true" />
+    
+    <!-- 차량 상태 모니터링 -->
+    <node name="vehicle_monitor" pkg="rostopic" type="rostopic" args="echo /cmd_vel" output="screen"/>
+    
+</launch>
